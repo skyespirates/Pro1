@@ -1,0 +1,14 @@
+{
+  "name": "prosatu",
+  "version": "1.0.0",
+  "description": "Create a simple website",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Skyes Crawford",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
