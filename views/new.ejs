@@ -1,0 +1,8 @@
+<%- include("partials/header.ejs") %>
+    <form action="/contents" method="post">
+        <div><input type="text" name=content[title] placeholder="title"></div>
+        <div><input type="text" name=content[image] placeholder="image"></div>
+        <div><input type="text" name=content[description] placeholder="description"></div>
+        <div><input type="submit"></div>
+    </form>
+<%- include("partials/footer.ejs") %>

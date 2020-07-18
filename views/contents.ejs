@@ -1,0 +1,10 @@
+<%- include("partials/header") %>
+
+<% content.forEach(function(contents){ %>
+    <div>
+        <h2><%= contents.title %></h2>
+        <img src="<%= contents.image %>" alt="image">
+        <article><%= contents.description %></article>
+    </div>
+<% }) %>
+<%- include("partials/footer") %>
