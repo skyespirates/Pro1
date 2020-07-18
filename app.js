@@ -51,6 +51,34 @@ app.post("/contents", (req, res) => {
         }
     })
 })
+
+app.get("/contents/:id", (req, res) => {
+    Content.findById(req.params.id, (err, find) => {
+        if(err){
+            res.redirect("/contents");
+        } else {
+            res.render("show", {content: find});
+        }
+    })
+})
+app.get("/contents/:id/edit", (req, res) => {
+    Content.findById(req.params.id, (err, found) => {
+        if(err){
+            res.redirect("/contents");
+        } else {
+            res.render("edit", {edit: found});
+        }
+    })
+})
+app.put("/contents/:id", (req, res) => {
+    Content.findByIdAndUpdate(req.params.id, req.body.form, (err, result) => {
+        if(err) {
+            res.redirect("/contents");
+        } else {
+            res.redirect("/contents/" + req.params.id);
+        }
+    })
+})
 app.listen(3000, () => {
     console.log("connected..");
 })

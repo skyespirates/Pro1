@@ -1,0 +1,9 @@
+<%- include("partials/header.ejs") %>
+<h1>Edit Post</h1>
+<form action="/contents/<%= edit._id %>?_method=PUT" method="POST">
+    <div><input type="text" name="form[title]" value="<%= edit.title %>"></div>
+    <div><input type="text" name="form[image]" value="<%= edit.image %>"></div>
+    <div><input type="text" name="form[description]" value="<%= edit.description %>"></div>
+    <div><input type="submit" value="Edit"></div>
+</form>
+<%- include("partials/footer.ejs") %>

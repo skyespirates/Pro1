@@ -1,0 +1,6 @@
+<%- include("partials/header") %>
+    <h1><%= content.title %></h1>
+    <img src="<%= content.image %>" alt="This is image">
+    <p><%= content.description %></p>
+    <a href="/contents/<%= content._id %>/edit">Edit</a>
+<%- include("partials/footer") %>
