@@ -3,4 +3,20 @@
     <img src="<%= content.image %>" alt="This is image">
     <p><%= content.description %></p>
     <a href="/contents/<%= content._id %>/edit">Edit</a>
+    <form action="/contents/<%= content._id %>?_method=DELETE" method="POST">
+        <input type="submit" value="Delete">
+    </form>
+    <div>
+        <a href="/contents/<%= content._id %>/comments/new">Add comment</a>
+        <div>
+            <% content.comments.forEach(function(data) { %>
+                <p><%= data.author %> - <%= data.text %></p>
+                <a href="/contents/<%= content._id %>/comments/<%= data._id %>/edit">Edit</a>
+
+                <form action="/contents/<%= content._id %>/comments/<%= data._id %>?_method=DELETE" method="POST">
+                    <input type="submit" value="Delete">
+                </form>
+            <% }) %>
+        </div>
+    </div>
 <%- include("partials/footer") %>

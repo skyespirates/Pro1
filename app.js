@@ -2,19 +2,17 @@ const express = require("express"),
       app = express(),
       mongoose = require("mongoose"),
       bodyParser = require("body-parser"),
-      methodOverride = require("method-override");
+      methodOverride = require("method-override"),
+      Content = require("./models/content"),
+      Comment = require("./models/comment"),
+      seedDB = require("./seeds");
 
 mongoose.connect("mongodb://localhost:27017/pro1", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}).then(console.log("connected to mongoDB"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
-var contentSchema = new mongoose.Schema({
-    title: String,
-    image: String,
-    description: String
-});
-var Content = mongoose.model("Content", contentSchema);
+
 // Content.create({
 //     title: "Stars in the sky",
 //     image: "https://images.unsplash.com/photo-1508402476522-c77c2fa4479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
@@ -27,9 +25,13 @@ var Content = mongoose.model("Content", contentSchema);
 //     }
 // })
 
+// seedDB();
+
+//  LANDING PAGE
 app.get("/", (req, res) => {
     res.render("home");
 });
+//  CONTENTS ROUTE
 app.get("/contents", (req, res) => {
     Content.find({}, function (err, cont) {
         if(err){
@@ -39,9 +41,11 @@ app.get("/contents", (req, res) => {
         }
     })
 })
+//  CREATE NEW CONTENT/FORM
 app.get("/contents/new", (req, res) => {
     res.render("new");
 })
+//  CREATE NEW CONTENT/LOGIC
 app.post("/contents", (req, res) => {
     Content.create(req.body.content, (err, cont) => {
         if(err){
@@ -51,9 +55,9 @@ app.post("/contents", (req, res) => {
         }
     })
 })
-
+//  SHOW/READ A CONTENT
 app.get("/contents/:id", (req, res) => {
-    Content.findById(req.params.id, (err, find) => {
+    Content.findById(req.params.id).populate("comments").exec((err, find) => {
         if(err){
             res.redirect("/contents");
         } else {
@@ -61,6 +65,7 @@ app.get("/contents/:id", (req, res) => {
         }
     })
 })
+//  UPDATE/EDIT A CONTENT/FORM
 app.get("/contents/:id/edit", (req, res) => {
     Content.findById(req.params.id, (err, found) => {
         if(err){
@@ -70,6 +75,7 @@ app.get("/contents/:id/edit", (req, res) => {
         }
     })
 })
+//  UPDATE/EDIT A CONTENT/LOGIC
 app.put("/contents/:id", (req, res) => {
     Content.findByIdAndUpdate(req.params.id, req.body.form, (err, result) => {
         if(err) {
@@ -79,6 +85,76 @@ app.put("/contents/:id", (req, res) => {
         }
     })
 })
+//  DELETE/DESTROY A CONTENT
+app.delete("/contents/:id", (req, res) => {
+    Content.findByIdAndDelete(req.params.id, (err, success) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.redirect("/contents");
+        }
+    })
+})
+
+//  CREATE NEW COMMENT/FORM
+app.get("/contents/:id/comments/new", (req, res) => {
+    Content.findById(req.params.id, (err, get) => {
+        if(err){
+            res.redirect("/contents");
+        } else {
+            res.render("newcomment", {content: get});
+        }
+    })
+})
+//  CREATE NEW COMMENT/LOGIC
+app.post("/contents/:id/comments", (req, res) => {
+    Content.findById(req.params.id, (err, content) => {
+        if(err){
+            console.log(err);
+        } else {
+            Comment.create(req.body.comment, (err, commnt) => {
+                if(err){
+                    console.log(err);
+                } else {
+                    content.comments.push(commnt);
+                    content.save();
+                    res.redirect("/contents/" + req.params.id);
+                }
+            })
+        }
+    })
+});
+//  UPDATE/EDIT COMMENT/FORM
+app.get("/contents/:id/comments/:cid/edit", (req, res) => {
+    Comment.findById(req.params.cid, (err, comment) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("editcomment", {content: req.params.id, comment: comment})
+        }
+    })
+})
+//  UPDATE/EDIT COMMENT/LOGIC
+app.put("/contents/:id/comments/:cid", (req, res) => {
+    Comment.findByIdAndUpdate(req.params.cid, req.body.comment, (err, commentUpdated) => {
+        if(err){
+            res.redirect("back");
+        } else {
+            res.redirect("/contents/" + req.params.id)
+        }
+    })
+})
+//  DESTROY/DELETE COMMENT
+app.delete("/contents/:id/comments/:cid", (req, res) => {
+    Comment.findByIdAndRemove(req.params.cid, (err) => {
+        if(err){
+            res.redirect("/contents");
+        } else {
+            res.redirect("/contents/" + req.params.id);
+        }
+    })
+})
+
 app.listen(3000, () => {
     console.log("connected..");
 })
