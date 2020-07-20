@@ -3,8 +3,11 @@ const express = require("express"),
       mongoose = require("mongoose"),
       bodyParser = require("body-parser"),
       methodOverride = require("method-override"),
+      passport = require("passport"),
+      LocalStrategy = require("passport-local"),
       Content = require("./models/content"),
       Comment = require("./models/comment"),
+      User = require("./models/user");
       seedDB = require("./seeds");
 
 mongoose.connect("mongodb://localhost:27017/pro1", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}).then(console.log("connected to mongoDB"));
@@ -12,21 +15,22 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
+//  AUTHENTICATION CONFIGURATION
+app.use(require("express-session")({
+    secret: "Once again Rusty wins cutest dog!",
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-// Content.create({
-//     title: "Stars in the sky",
-//     image: "https://images.unsplash.com/photo-1508402476522-c77c2fa4479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-//     description: "This is description"
-// }, (err, content) => {
-//     if(err){
-//         console.log(err);
-//     } else {
-//         console.log("content created");   
-//     }
-// })
-
-// seedDB();
-
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    next();
+});
 //  LANDING PAGE
 app.get("/", (req, res) => {
     res.render("home");
@@ -155,6 +159,35 @@ app.delete("/contents/:id/comments/:cid", (req, res) => {
     })
 })
 
+// AUTHENTICATION ROUTES
+app.get("/register", (req, res) => {
+    res.render("register");
+})
+app.post("/register", (req, res) => {
+    var newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password, function(err, user){
+        if(err){
+            console.log(err);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/contents");
+        })
+    })
+})
+app.get("/login", (req, res) => {
+    res.render("login");
+})
+app.post("/login", passport.authenticate("local", 
+    {
+    successRedirect: "/contents",
+    failureRedirect: "/login"
+    }), function(req, res){}
+);
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.redirect("/");
+});
 app.listen(3000, () => {
     console.log("connected..");
 })
