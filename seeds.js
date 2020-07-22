@@ -14,19 +14,19 @@ async function seedDB() {
     console.log("Comment removed");
     await Content.deleteMany({});
     console.log("Content removed");
-    for(const seed of seeds){
-        let content = await Content.create(seed);
-        console.log("Content created");
-        let comment = await Comment.create(
-            {
-                text: "what's goin' on here?",
-                author: "Crwford"
-            }
-        )
-        console.log("Comment created");
-        content.comments.push(comment);
-        content.save();
-        console.log("Comment added to content");
-    }
+    // for(const seed of seeds){
+    //     let content = await Content.create(seed);
+    //     console.log("Content created");
+    //     let comment = await Comment.create(
+    //         {
+    //             text: "what's goin' on here?",
+    //             author: "Crwford"
+    //         }
+    //     )
+    //     console.log("Comment created");
+    //     content.comments.push(comment);
+    //     content.save();
+    //     console.log("Comment added to content");
+    // }
 }
 module.exports = seedDB;

@@ -1,7 +1,8 @@
-<%- include("partials/header") %>
+<%- include("../partials/header") %>
     <h1><%= content.title %></h1>
     <img src="<%= content.image %>" alt="This is image">
     <p><%= content.description %></p>
+    <p><em>Submitted by <%= content.author.username %></em></p>
     <a href="/contents/<%= content._id %>/edit">Edit</a>
     <form action="/contents/<%= content._id %>?_method=DELETE" method="POST">
         <input type="submit" value="Delete">
@@ -10,7 +11,7 @@
         <a href="/contents/<%= content._id %>/comments/new">Add comment</a>
         <div>
             <% content.comments.forEach(function(data) { %>
-                <p><%= data.author %> - <%= data.text %></p>
+                <p><%= data.author.username %> - <%= data.text %></p>
                 <a href="/contents/<%= content._id %>/comments/<%= data._id %>/edit">Edit</a>
 
                 <form action="/contents/<%= content._id %>/comments/<%= data._id %>?_method=DELETE" method="POST">
@@ -19,4 +20,4 @@
             <% }) %>
         </div>
     </div>
-<%- include("partials/footer") %>
+<%- include("../partials/footer") %>

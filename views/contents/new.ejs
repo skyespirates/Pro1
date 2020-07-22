@@ -1,4 +1,4 @@
-<%- include("partials/header.ejs") %>
+<%- include("../partials/header") %>
     <h1>Create New Post</h1>
     <form action="/contents" method="post">
         <div><input type="text" name=content[title] placeholder="title"></div>
@@ -6,4 +6,4 @@
         <div><input type="text" name=content[description] placeholder="description"></div>
         <div><input type="submit"></div>
     </form>
-<%- include("partials/footer.ejs") %>
+<%- include("../partials/footer") %>
