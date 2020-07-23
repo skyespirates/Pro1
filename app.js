@@ -44,13 +44,7 @@ app.use(commentRoutes);
 
 
 //  MIDLEWARE
-function isLogin(req, res, nex){
-    if(req.isAuthenticated()){
-        next();
-    } else {
-        res.redirect("/login");
-    }
-}
+
 app.listen(3000, () => {
     console.log("connected..");
 })
