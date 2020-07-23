@@ -2,7 +2,7 @@
 
 <% content.forEach(function(contents){ %>
     <div>
-        <h1><a href="/contents/<%= contents._id %>"><%= contents.title %></a></h1>
+        <h1><a href="/contents/<%= contents._id %>"><%= contents.title %></a> - <span><%= contents.author.username %></span></h1>
         <img src="<%= contents.image %>" alt="image">
         <article><%= contents.description %></article>
         <a href="/contents/<%= contents._id %>">More</a>

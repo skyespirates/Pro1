@@ -43,17 +43,13 @@ router.get("/contents/:id", (req, res) => {
     })
 })
 //  UPDATE/EDIT A CONTENT/FORM
-router.get("/contents/:id/edit", (req, res) => {
-    Content.findById(req.params.id, (err, found) => {
-        if(err){
-            res.redirect("/contents");
-        } else {
-            res.render("contents/edit", {edit: found});
-        }
-    })
-})
+router.get("/contents/:id/edit", checkContentOwnership, (req, res) => {
+        Content.findById(req.params.id, (err, found) => {
+                res.render("contents/edit", {edit: found});
+        });
+});
 //  UPDATE/EDIT A CONTENT/LOGIC
-router.put("/contents/:id", (req, res) => {
+router.put("/contents/:id", checkContentOwnership, (req, res) => {
     Content.findByIdAndUpdate(req.params.id, req.body.form, (err, result) => {
         if(err) {
             res.redirect("/contents");
@@ -63,7 +59,7 @@ router.put("/contents/:id", (req, res) => {
     })
 })
 //  DELETE/DESTROY A CONTENT
-router.delete("/contents/:id", (req, res) => {
+router.delete("/contents/:id", checkContentOwnership, (req, res) => {
     Content.findByIdAndRemove(req.params.id, (err, success) => {
         if(err){
             res.redirect("/")
@@ -76,6 +72,24 @@ router.delete("/contents/:id", (req, res) => {
 function isLogin(req, res, next){
     if(req.isAuthenticated()){
         next();
+    } else {
+        res.redirect("/login");
+    }
+}
+
+function checkContentOwnership(req, res, next){
+    if(req.isAuthenticated()){
+        Content.findById(req.params.id, (err, found) => {
+            if(err){
+                res.redirect("back");
+            } else {
+                if(found.author.id.equals(req.user._id)){
+                    next();
+                } else {
+                    res.redirect("back");
+                }
+            }
+        })
     } else {
         res.redirect("/login");
     }

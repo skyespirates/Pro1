@@ -3,7 +3,6 @@
 <h1>Add New Comment</h1>
 <form action="/contents/<%= content %>/comments/<%= comment._id %>?_method=PUT" method="POST">
     <div><input type="text" name=comment[text] value="<%= comment.text %>"></div>
-    <div><input type="text" name=comment[author] value="<%= comment.author %>"></div>
     <div><input type="submit"></div>
 </form>
 <%- include("../partials/footer") %>

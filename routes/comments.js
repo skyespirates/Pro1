@@ -37,17 +37,17 @@ router.post("/contents/:id/comments", (req, res) => {
     })
 });
 //  UPDATE/EDIT COMMENT/FORM
-router.get("/contents/:id/comments/:cid/edit", (req, res) => {
+router.get("/contents/:id/comments/:cid/edit", checkCommentOwnership, (req, res) => {
     Comment.findById(req.params.cid, (err, comment) => {
         if(err){
             console.log(err);
         } else {
-            res.render("editcomment", {content: req.params.id, comment: comment})
+            res.render("comments/editcomment", {content: req.params.id, comment: comment})
         }
     })
 })
 //  UPDATE/EDIT COMMENT/LOGIC
-router.put("/contents/:id/comments/:cid", (req, res) => {
+router.put("/contents/:id/comments/:cid", checkCommentOwnership, (req, res) => {
     Comment.findByIdAndUpdate(req.params.cid, req.body.comment, (err, commentUpdated) => {
         if(err){
             res.redirect("back");
@@ -57,7 +57,7 @@ router.put("/contents/:id/comments/:cid", (req, res) => {
     })
 })
 //  DESTROY/DELETE COMMENT
-router.delete("/contents/:id/comments/:cid", (req, res) => {
+router.delete("/contents/:id/comments/:cid", checkCommentOwnership, (req, res) => {
     Comment.findByIdAndRemove(req.params.cid, (err) => {
         if(err){
             res.redirect("/contents");
@@ -74,5 +74,23 @@ function isLogin(req, res, next){
         res.redirect("/login");
     }
 }
-
+function checkCommentOwnership(req, res, next){
+    if(req.isAuthenticated()){
+        Comment.findById(req.params.cid, (err, found) => {
+            if(err){
+                res.redirect("back");
+            } else {
+                if(found.author.id.equals(req.user._id)){
+                    next();
+                } else {
+                    res.send("Ini bukan komentar anda :) maap");
+                    // res.redirect("back");
+                }
+            }
+        })
+    } else {
+        res.send("Login dulu gih");
+        // res.redirect("/login");
+    }
+}
 module.exports = router;
