@@ -14,7 +14,7 @@ const contentRoutes = require("./routes/contents"),
       commentRoutes = require("./routes/comments"),
       indexRoutes   = require("./routes/index");
 
-mongoose.connect("mongodb://localhost:27017/pro1", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}).then(console.log("connected to mongoDB"));
+mongoose.connect("mongodb+srv://skyes07:bmwb1gtr@cluster0.tec2n.mongodb.net/pro1?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}).then(console.log("connected to mongoDB"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
@@ -41,10 +41,7 @@ app.use(indexRoutes);
 app.use(contentRoutes);
 app.use(commentRoutes);
 
-
-
-//  MIDLEWARE
-
-app.listen(3000, () => {
-    console.log("connected..");
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${ PORT }`);
+});
